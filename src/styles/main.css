@@ -680,11 +680,9 @@ img, svg, video { max-width: 100%; height: auto; }
 }
 .hitabe__content {
   position: relative; z-index: 2;
-  width: 100%;
   max-width: 900px;
   text-align: center;
   padding: var(--s-8) var(--s-5);
-  margin: 0 auto;
 }
 .hitabe__text { margin: var(--s-7) 0; }
 .hitabe__line {
@@ -881,6 +879,7 @@ img, svg, video { max-width: 100%; height: auto; }
   .samsun__title { font-size: 3rem; }
 
   /* Hitabe lines tighter line-height for narrow screens */
+  .hitabe__content { width: 100%; }  /* override flex shrink-to-fit so text fills viewport on mobile */
   .hitabe__line { font-size: 1.25rem; margin: var(--s-4) 0; }
   .hitabe__line--accent { font-size: 1.45rem; }
 
