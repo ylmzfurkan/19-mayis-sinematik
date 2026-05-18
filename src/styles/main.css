@@ -1,0 +1,946 @@
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--f-body);
+  background: var(--c-deep);
+  color: var(--c-text);
+  line-height: 1.55;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  /* Prevent iOS Safari from bouncing horizontally on touch */
+  overscroll-behavior-x: none;
+}
+
+/* Make sure media never blows out a container on mobile */
+img, svg, video { max-width: 100%; height: auto; }
+
+/* ──────────────────────────────────────────────
+   Persistent UI
+─────────────────────────────────────────────── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: rgba(232, 212, 160, 0.08);
+  z-index: 100; pointer-events: none;
+}
+#progress-bar span {
+  display: block; height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--c-gold-2), var(--c-dawn));
+  transition: width 0.15s linear;
+}
+
+.controls {
+  position: fixed; top: var(--s-4); right: var(--s-4);
+  display: flex; gap: var(--s-3); z-index: 90;
+}
+#audio-toggle {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(10, 14, 39, 0.55);
+  border: 1px solid rgba(232, 212, 160, 0.25);
+  color: var(--c-gold); backdrop-filter: blur(8px);
+  display: grid; place-items: center;
+  transition: border-color 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  position: relative;
+}
+#audio-toggle:hover { border-color: var(--c-gold); transform: scale(1.05); }
+#audio-toggle .audio-on-only { opacity: 0; transition: opacity 0.3s; }
+#audio-toggle[aria-pressed="true"] .audio-on-only { opacity: 1; }
+
+/* Pulse glow while audio is paused → invites the user to interact */
+#audio-toggle[aria-pressed="false"]::before {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--c-gold);
+  opacity: 0;
+  animation: audioPulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+#audio-toggle[aria-pressed="true"]::before { animation: none; }
+@keyframes audioPulse {
+  0%   { opacity: 0.7; transform: scale(0.9); }
+  100% { opacity: 0;   transform: scale(1.4); }
+}
+
+/* ──────────────────────────────────────────────
+   Generic scene
+─────────────────────────────────────────────── */
+#story { position: relative; }
+
+.scene {
+  position: relative;
+  min-height: 100vh; /* fallback for older browsers */
+  min-height: 100dvh; /* respects mobile URL bar */
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  padding: var(--s-9) var(--s-5);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--c-gold-2); margin-bottom: var(--s-4);
+}
+.eyebrow--gold { color: var(--c-gold); }
+
+.scene h2 {
+  font-family: var(--f-display);
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  margin-bottom: var(--s-5);
+  color: var(--c-cream);
+}
+.scene p { font-size: clamp(1rem, 1.4vw, 1.15rem); color: var(--c-text-dim); max-width: 52ch; }
+
+/* ──────────────────────────────────────────────
+   Scene 1 — Opening
+─────────────────────────────────────────────── */
+.scene--opening {
+  background: radial-gradient(ellipse at center, var(--c-night-2) 0%, var(--c-deep) 70%);
+  color: var(--c-cream);
+  text-align: center;
+}
+.stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, white, transparent),
+    radial-gradient(1px 1px at 60% 70%, white, transparent),
+    radial-gradient(1.5px 1.5px at 35% 80%, var(--c-gold), transparent),
+    radial-gradient(1px 1px at 80% 20%, white, transparent),
+    radial-gradient(1px 1px at 50% 50%, var(--c-gold-2), transparent),
+    radial-gradient(1px 1px at 15% 60%, white, transparent),
+    radial-gradient(1.5px 1.5px at 90% 85%, white, transparent),
+    radial-gradient(1px 1px at 70% 40%, var(--c-gold), transparent),
+    radial-gradient(1px 1px at 25% 15%, white, transparent),
+    radial-gradient(1px 1px at 45% 25%, white, transparent);
+  background-size: 100% 100%;
+  opacity: 0.6;
+  animation: twinkle 6s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
+}
+.opening__content { position: relative; z-index: 2; max-width: 880px; }
+.opening__eyebrow {
+  font-style: italic; font-family: var(--f-quote);
+  color: var(--c-gold); margin-bottom: var(--s-7);
+  font-size: clamp(1rem, 1.6vw, 1.3rem); opacity: 0;
+}
+.opening__date {
+  font-family: var(--f-display);
+  font-size: clamp(3.5rem, 14vw, 11rem);
+  line-height: 0.9;
+  display: flex; flex-direction: column; gap: 0.05em;
+  align-items: center;
+}
+.opening__date span { display: block; opacity: 0; transform: translateY(40px); letter-spacing: 0.04em; }
+.opening__date span:nth-child(2) { color: var(--c-gold); }
+.opening__scroll {
+  margin-top: var(--s-8); font-size: 0.85rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--c-text-mute); opacity: 0;
+}
+.opening__scroll span { display: inline-block; margin-left: var(--s-2); animation: bob 2s ease-in-out infinite; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ──────────────────────────────────────────────
+   Scene 2 — Istanbul
+─────────────────────────────────────────────── */
+.scene--istanbul {
+  background: linear-gradient(180deg, #1a2247 0%, #2d3a5f 50%, #0e2a4a 100%);
+  align-items: flex-end;
+  padding-bottom: 0;
+}
+.parallax { position: absolute; inset: 0; }
+.parallax__sky {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 20%, rgba(232, 212, 160, 0.25), transparent 60%);
+}
+.parallax__hills {
+  position: absolute; left: 0; right: 0; bottom: 28%;
+  height: 30%;
+  background:
+    linear-gradient(180deg, transparent, rgba(5,7,20,0.4)),
+    linear-gradient(180deg, #0d1530 0%, #050714 100%);
+  clip-path: polygon(0 100%, 0 60%, 8% 45%, 18% 55%, 25% 35%, 35% 50%, 45% 40%, 55% 55%,
+                     65% 30%, 75% 45%, 85% 38%, 92% 50%, 100% 42%, 100% 100%);
+}
+.parallax__sea {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 28%;
+  background: linear-gradient(180deg, #0e2a4a, #050714);
+}
+.parallax__sea::before, .parallax__sea::after {
+  content: ''; position: absolute; left: 0; right: 0;
+  height: 1px; background: rgba(232, 212, 160, 0.15);
+}
+.parallax__sea::before { top: 20%; }
+.parallax__sea::after  { top: 55%; opacity: 0.5; }
+.parallax__ship {
+  position: absolute; bottom: 18%; left: -240px;
+  width: 240px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+  pointer-events: none;
+}
+.scene__text {
+  position: relative; z-index: 2;
+  max-width: 460px;
+  padding: var(--s-7) var(--s-6) var(--s-9);
+  margin-bottom: var(--s-9);
+}
+.scene__text--left { margin-right: auto; margin-left: 6vw; }
+
+/* ──────────────────────────────────────────────
+   Scene 3 — Voyage (three nights at sea)
+   The scene is tall; atmosphere stays sticky in the viewport
+   while narrative chapters scroll past on top of it.
+─────────────────────────────────────────────── */
+.scene--voyage {
+  display: block;
+  padding: 0;
+  min-height: auto;
+  overflow: visible;
+  background: linear-gradient(180deg, #060a26 0%, #0a1b3a 30%, #0e2a4a 65%, #1a2a48 100%);
+  position: relative;
+}
+
+/* Sticky atmospheric stage that stays in the viewport */
+.voyage__atmosphere {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Tint overlay — two pre-painted gradient layers cross-faded via opacity.
+   Animating opacity is GPU-composited; animating gradient backgrounds is not. */
+.voyage__tint {
+  position: absolute; inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.voyage__tint::before,
+.voyage__tint::after {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-out);
+  will-change: opacity;
+}
+.voyage__tint::before {
+  background: radial-gradient(ellipse at center, rgba(10, 10, 30, 0.4), rgba(0, 0, 0, 0.65));
+}
+.voyage__tint::after {
+  background: linear-gradient(180deg,
+    rgba(58, 42, 90, 0.0) 0%,
+    rgba(201, 122, 58, 0.18) 60%,
+    rgba(243, 185, 107, 0.25) 100%);
+}
+.scene--voyage[data-mood="storm"] .voyage__tint::before { opacity: 1; }
+.scene--voyage[data-mood="dawn"]  .voyage__tint::after  { opacity: 1; }
+
+/* Stars */
+.voyage__stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 18% 22%, #e8d4a0, transparent),
+    radial-gradient(1.4px 1.4px at 27% 8%, #fff, transparent),
+    radial-gradient(1px 1px at 38% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 48% 28%, #e8d4a0, transparent),
+    radial-gradient(1.2px 1.2px at 58% 6%, #fff, transparent),
+    radial-gradient(1px 1px at 65% 16%, #fff, transparent),
+    radial-gradient(1px 1px at 88% 32%, #e8d4a0, transparent),
+    radial-gradient(1.5px 1.5px at 92% 8%, #fff, transparent),
+    radial-gradient(1px 1px at 14% 32%, #fff, transparent),
+    radial-gradient(1px 1px at 33% 36%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 28%, #e8d4a0, transparent);
+  background-size: 100% 100%;
+  opacity: 0.55;
+  animation: voyageTwinkle 7s ease-in-out infinite alternate;
+}
+@keyframes voyageTwinkle {
+  from { opacity: 0.35; }
+  to { opacity: 0.75; }
+}
+
+/* Moon */
+.voyage__moon {
+  position: absolute;
+  top: 9%; right: 13%;
+  width: clamp(64px, 8vw, 110px);
+  aspect-ratio: 1;
+  z-index: 1;
+}
+.voyage__moon-glow {
+  position: absolute; inset: -120%;
+  background: radial-gradient(circle, rgba(243, 199, 130, 0.20) 0%, rgba(243, 199, 130, 0.08) 35%, transparent 65%);
+  animation: moonPulse 6s ease-in-out infinite;
+}
+.voyage__moon-disc {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #faf4e4 0%, #f3d99a 55%, #c9a85d 100%);
+  box-shadow:
+    0 0 28px rgba(250, 244, 228, 0.35),
+    0 0 60px rgba(243, 185, 107, 0.22);
+}
+.voyage__moon-disc::after {
+  content: ''; position: absolute;
+  width: 22%; height: 18%; border-radius: 50%;
+  background: rgba(120, 90, 50, 0.22);
+  top: 28%; left: 48%;
+  box-shadow: 9px 14px 0 -1px rgba(120, 90, 50, 0.18);
+}
+@keyframes moonPulse {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+/* Horizon glow */
+.voyage__horizon {
+  position: absolute; left: 0; right: 0;
+  bottom: 22%; height: 26%;
+  background: radial-gradient(ellipse at center bottom,
+    rgba(243, 185, 107, 0.10) 0%,
+    rgba(243, 185, 107, 0.04) 40%,
+    transparent 75%);
+  pointer-events: none;
+}
+
+/* Drifting mist */
+.voyage__mist {
+  position: absolute; left: -20%; right: -20%; top: 10%;
+  height: 60%;
+  pointer-events: none;
+  filter: blur(16px);
+  will-change: transform;
+  transform: translateZ(0); /* force own compositor layer */
+}
+.voyage__mist--far {
+  z-index: 1;
+  opacity: 0.7;
+  background-image:
+    radial-gradient(ellipse 28% 22% at 18% 60%, rgba(245, 236, 212, 0.08), transparent 70%),
+    radial-gradient(ellipse 22% 18% at 42% 40%, rgba(245, 236, 212, 0.09), transparent 70%),
+    radial-gradient(ellipse 30% 24% at 68% 55%, rgba(245, 236, 212, 0.07), transparent 70%),
+    radial-gradient(ellipse 25% 20% at 88% 45%, rgba(245, 236, 212, 0.08), transparent 70%);
+  animation: mistDriftFar 50s linear infinite alternate;
+}
+.voyage__mist--near {
+  z-index: 3;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(ellipse 35% 28% at 25% 70%, rgba(232, 212, 160, 0.07), transparent 70%),
+    radial-gradient(ellipse 30% 24% at 60% 55%, rgba(245, 236, 212, 0.06), transparent 70%),
+    radial-gradient(ellipse 25% 22% at 90% 65%, rgba(232, 212, 160, 0.05), transparent 70%);
+  animation: mistDriftNear 32s linear infinite alternate;
+}
+@keyframes mistDriftFar {
+  from { transform: translate3d(-6%, 0, 0); }
+  to   { transform: translate3d(6%, 0, 0); }
+}
+@keyframes mistDriftNear {
+  from { transform: translate3d(8%, 0, 0); }
+  to   { transform: translate3d(-8%, 0, 0); }
+}
+
+/* Ship — sits on the horizon line, well below the text block */
+.voyage__ship {
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  width: clamp(150px, 20vw, 240px);
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.6));
+  z-index: 2;
+  opacity: 0.9;
+  will-change: transform;
+}
+.voyage__ship svg { width: 100%; height: auto; }
+.voyage__ship-lantern {
+  animation: lanternFlicker 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px #f3b96b);
+}
+@keyframes lanternFlicker {
+  0%, 100% { opacity: 1; }
+  20% { opacity: 0.55; }
+  50% { opacity: 0.85; }
+  80% { opacity: 0.7; }
+}
+
+/* Waves */
+.voyage__waves {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 42%; opacity: 0.95;
+  z-index: 4;
+}
+.voyage__waves svg { width: 100%; height: 100%; }
+.voyage__waves .wave--0 { fill: rgba(20, 50, 90, 0.45); }
+.voyage__waves .wave--1 { fill: rgba(14, 42, 74, 0.7); }
+.voyage__waves .wave--2 { fill: rgba(8, 26, 48, 0.85); }
+.voyage__waves .wave--3 { fill: #050714; }
+
+/* Narrative chapters scroll on top of sticky atmosphere */
+.voyage__chapters {
+  position: relative;
+  z-index: 5;
+  margin-top: -100vh;
+  margin-top: -100dvh; /* pull chapters back over the sticky atmosphere */
+}
+.voyage__chapter {
+  min-height: 110vh;
+  min-height: 110dvh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center;
+  padding: var(--s-9) var(--s-5);
+  max-width: 880px;
+  margin: 0 auto;
+  position: relative;
+}
+.voyage__chapter::before {
+  /* Subtle vignette behind text for legibility — no filter blur to keep paint cheap */
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at center, rgba(5, 7, 20, 0.5), transparent 75%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.voyage__eyebrow {
+  font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--c-gold-2); margin-bottom: var(--s-5);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.voyage__chapter-head {
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--s-3); margin-bottom: var(--s-7);
+}
+.voyage__chapter-num {
+  font-family: var(--f-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--c-gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+.voyage__chapter-num::before,
+.voyage__chapter-num::after {
+  content: ''; display: inline-block;
+  width: 22px; height: 1px;
+  background: var(--c-gold);
+  vertical-align: middle;
+  margin: 0 var(--s-3);
+  opacity: 0.55;
+}
+.voyage__chapter-title {
+  font-family: var(--f-display);
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: var(--c-cream);
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+}
+
+.voyage__chapter-body {
+  display: flex; flex-direction: column; gap: var(--s-5);
+  max-width: 640px;
+}
+.voyage__chapter-body p,
+.voyage__chapter-coda {
+  font-family: var(--f-body);
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--c-cream);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+.voyage__chapter-coda {
+  margin-top: var(--s-6);
+  font-style: italic;
+  color: var(--c-text-dim);
+  max-width: 600px;
+}
+.voyage__accent {
+  font-style: italic;
+  color: var(--c-gold);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+}
+
+/* Intro chapter */
+.voyage__intro .voyage__chapter-title {
+  font-size: clamp(2.8rem, 6.5vw, 4.8rem);
+}
+.voyage__departure {
+  margin-top: var(--s-8);
+  display: flex; flex-direction: column; gap: var(--s-2);
+}
+.voyage__date {
+  font-size: 0.78rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--c-gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+.voyage__departure-title {
+  font-family: var(--f-quote); font-style: italic;
+  font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+  color: var(--c-cream);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+
+/* Hero quote (Night 2) */
+.voyage__quote {
+  margin: var(--s-7) 0 var(--s-5);
+  padding: var(--s-6) var(--s-7);
+  border-left: 3px solid var(--c-gold);
+  border-right: 3px solid var(--c-gold);
+  max-width: 720px;
+  position: relative;
+}
+.voyage__quote p {
+  font-family: var(--f-quote); font-style: italic;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  line-height: 1.4;
+  color: var(--c-gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+.voyage__quote cite {
+  display: block;
+  margin-top: var(--s-4);
+  font-style: normal;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--c-gold-2);
+}
+
+/* Outro line transitioning into next scene */
+.voyage__outro {
+  margin-top: var(--s-8);
+  font-family: var(--f-quote); font-style: italic;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--c-gold);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 700px) {
+  .voyage__chapter { min-height: 100vh; padding: var(--s-7) var(--s-4); }
+  .voyage__quote { padding: var(--s-5) var(--s-4); }
+}
+
+/* ──────────────────────────────────────────────
+   Scene 4 — Samsun arrival
+─────────────────────────────────────────────── */
+.scene--samsun {
+  background: #050714;
+  flex-direction: column; text-align: center;
+}
+.samsun__sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #1a1a3a 0%, #3a2a5a 30%, #c97a3a 65%, #f3b96b 85%, #faf4e4 100%);
+  opacity: 0;
+}
+.samsun__sun {
+  position: absolute; left: 50%; bottom: 25%;
+  width: 280px; height: 280px; border-radius: 50%;
+  background: radial-gradient(circle, #fff5d0 0%, #f3b96b 40%, transparent 70%);
+  transform: translate(-50%, 60%); opacity: 0;
+  filter: blur(2px);
+}
+.samsun__sea {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 30%;
+  background: linear-gradient(180deg, rgba(232, 114, 58, 0.3), #0e2a4a);
+}
+.samsun__pier {
+  position: absolute; left: 50%; bottom: 18%;
+  width: 200px; height: 4px;
+  background: #1a1f3a;
+  transform: translateX(-50%);
+  box-shadow: 0 6px 0 -1px #0a0e27;
+}
+.samsun__content { position: relative; z-index: 2; max-width: 720px; }
+.samsun__title {
+  font-size: clamp(3rem, 9vw, 7rem); color: var(--c-cream);
+  text-shadow: 0 4px 24px rgba(243, 185, 107, 0.4);
+}
+.samsun__lead {
+  font-family: var(--f-quote); font-style: italic;
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+  max-width: 36ch; margin: 0 auto;
+}
+
+/* ──────────────────────────────────────────────
+   Scene 5 — Anatolia map (sticky layout)
+─────────────────────────────────────────────── */
+.scene--map {
+  display: block;
+  padding: var(--s-9) var(--s-5);
+  min-height: auto;
+  overflow: visible;
+  background: linear-gradient(180deg, #050714 0%, #0a0e27 100%);
+}
+.map__layout {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: var(--s-8);
+  max-width: 1320px;
+  margin: 0 auto;
+  align-items: start;
+}
+.map__visual {
+  position: sticky;
+  top: var(--s-7);
+  display: flex; flex-direction: column;
+  gap: var(--s-5);
+  max-height: calc(100vh - var(--s-7) * 2);
+}
+.map__intro { max-width: 560px; }
+.map__intro h2 { margin-bottom: 0; }
+.map__wrap { width: 100%; }
+.map__svg { width: 100%; height: auto; }
+.map__land {
+  fill: rgba(232, 212, 160, 0.08);
+  stroke: rgba(232, 212, 160, 0.25);
+  stroke-width: 1.5;
+}
+.map__route { opacity: 0; stroke-dashoffset: 1000; stroke-dasharray: 1000; }
+.city circle {
+  fill: var(--c-gold); opacity: 0; transform-origin: var(--x) var(--y);
+  transform: scale(0); transform-box: fill-box;
+  filter: drop-shadow(0 0 8px var(--c-gold));
+}
+.city.is-active circle { opacity: 1; transform: scale(1); transition: all 0.6s var(--ease-out); }
+.city.is-active circle { animation: cityPulse 2s ease-in-out infinite; }
+@keyframes cityPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--c-gold)); }
+  50% { filter: drop-shadow(0 0 14px var(--c-gold)); }
+}
+.city text {
+  fill: var(--c-cream); font-family: var(--f-body);
+  font-size: 14px; font-weight: 600; text-anchor: middle;
+  opacity: 0; transition: opacity 0.6s 0.2s var(--ease-out);
+  paint-order: stroke fill;
+  stroke: rgba(5, 7, 20, 0.85);
+  stroke-width: 3;
+}
+.city.is-active text { opacity: 1; }
+.city .city__date { font-size: 11px; fill: var(--c-gold); font-weight: 500; stroke-width: 2.5; }
+
+.map__cards {
+  display: flex; flex-direction: column; gap: var(--s-7);
+  width: 100%;
+  padding: 10vh 0 20vh;
+}
+.map__card {
+  padding: var(--s-6) var(--s-5);
+  border: 1px solid rgba(232, 212, 160, 0.22);
+  border-radius: 14px;
+  background: rgba(232, 212, 160, 0.04);
+  backdrop-filter: blur(6px);
+  opacity: 0; transform: translateY(30px);
+  transition: border-color 0.3s var(--ease-out), background 0.3s var(--ease-out);
+}
+.map__card:hover {
+  border-color: var(--c-gold);
+  background: rgba(232, 212, 160, 0.08);
+}
+.map__card h3 {
+  font-family: var(--f-display); font-size: 1.3rem;
+  letter-spacing: 0.04em; color: var(--c-gold); margin-bottom: var(--s-2);
+}
+.map__card p { color: var(--c-text-dim); }
+
+/* ──────────────────────────────────────────────
+   Scene 6 — Hitabe
+─────────────────────────────────────────────── */
+.scene--hitabe {
+  background: #050714;
+  flex-direction: column;
+}
+.hitabe__bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(232, 212, 160, 0.08), transparent 70%),
+    linear-gradient(180deg, #050714, #0a0e27);
+}
+.hitabe__bg::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(232, 212, 160, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, rgba(232, 212, 160, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+.hitabe__content {
+  position: relative; z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  padding: var(--s-8) var(--s-5);
+  margin: 0 auto;
+}
+.hitabe__text { margin: var(--s-7) 0; }
+.hitabe__line {
+  font-family: var(--f-quote);
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  line-height: 1.5;
+  margin: var(--s-5) 0;
+  color: var(--c-cream);
+  opacity: 0; transform: translateY(20px);
+}
+.hitabe__line em { color: var(--c-gold); font-style: italic; }
+.hitabe__line--accent {
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  color: var(--c-gold);
+  font-weight: 500;
+}
+.hitabe__signature {
+  font-family: var(--f-body); font-size: 0.9rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--c-text-mute); margin-top: var(--s-7);
+}
+
+/* ──────────────────────────────────────────────
+   Scene 7 — Gallery (sticky cross-fade of 7 images)
+─────────────────────────────────────────────── */
+.scene--gallery {
+  display: block;
+  padding: 0;
+  min-height: auto;
+  overflow: visible;
+  position: relative;
+  background: #050714;
+  /* 7 images, ~95vh of scroll each → tall scene drives the crossfade */
+  height: 700vh;
+}
+
+.gallery__viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at center, #0a0e27 0%, #050714 70%, #02030a 100%);
+}
+
+/* Each slide fills the viewport (positioning stage), the 9:16 card lives inside */
+.gallery__slide {
+  position: absolute; inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6vh var(--s-4) 16vh; /* leave room for caption */
+  will-change: opacity;
+  opacity: 0;
+}
+.gallery__slide img {
+  width: clamp(260px, 38vh, 440px);
+  height: auto;
+  max-width: 86vw;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  display: block;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(232, 212, 160, 0.18);
+  will-change: transform;
+}
+
+.gallery__vignette {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.35) 85%, rgba(0, 0, 0, 0.7) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gallery__captions {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 12vh;
+  text-align: center;
+  padding: 0 var(--s-5);
+  z-index: 3;
+  pointer-events: none;
+}
+.gallery__caption {
+  position: absolute;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  font-family: var(--f-quote); font-style: italic;
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  color: var(--c-cream);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9), 0 2px 8px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  opacity: 0;
+}
+
+@media (max-width: 700px) {
+  .scene--gallery { height: 600vh; }
+  .gallery__captions { bottom: 10vh; padding: 0 var(--s-4); }
+  .gallery__caption { font-size: 1.25rem; }
+}
+
+/* ──────────────────────────────────────────────
+   Scene 8 — Finale
+─────────────────────────────────────────────── */
+.scene--finale {
+  background: linear-gradient(135deg, var(--c-red-dark), var(--c-red));
+  flex-direction: column;
+  text-align: center; gap: var(--s-5);
+}
+.scene--finale::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1), transparent 70%);
+  pointer-events: none;
+}
+.finale__flag {
+  width: clamp(220px, 32vw, 340px);
+  height: auto;
+  aspect-ratio: 3 / 2;
+  margin-bottom: var(--s-4);
+  border-radius: 4px;
+  overflow: hidden;
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.35));
+  background: #E30A17; /* fallback if SVG fails to render */
+}
+.finale__motto {
+  font-family: var(--f-display);
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  letter-spacing: 0.06em;
+  color: var(--c-cream);
+  text-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.finale__small {
+  font-size: 1.05rem; color: rgba(255, 255, 255, 0.85);
+  max-width: 36ch;
+}
+#restart { margin-top: var(--s-5); border-color: var(--c-cream); color: var(--c-cream); }
+#restart:hover { background: var(--c-cream); color: var(--c-red-dark); }
+
+/* ──────────────────────────────────────────────
+   Responsive
+─────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .map__layout { grid-template-columns: 1fr; gap: var(--s-6); }
+  .map__visual { position: static; max-height: none; align-items: center; text-align: center; }
+  .map__intro { margin: 0 auto; }
+  .map__wrap { max-width: 680px; margin: 0 auto; }
+  .map__cards { padding: var(--s-5) 0 var(--s-7); gap: var(--s-5); }
+  .scene--map { padding: var(--s-8) var(--s-5); }
+}
+
+/* ──────────────────────────────────────────────
+   Mobile (≤700px) — tablet portrait + phones
+─────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .scene { padding: var(--s-8) var(--s-4); }
+  .scene__text { padding: var(--s-5) var(--s-4) var(--s-7); margin-bottom: var(--s-7); }
+  .scene__text--left { margin-left: 0; }
+  .controls { top: var(--s-3); right: var(--s-3); }
+  .map__card { padding: var(--s-4); }
+  .scene--map { padding: var(--s-7) var(--s-4); }
+
+  /* Map SVG on mobile: hide tiny labels since cards already carry the info.
+     The glowing city dots still mark the route visually. */
+  .city text { display: none; }
+
+  /* Istanbul ship: push down and shrink so it doesn't fight the text */
+  .parallax__ship { bottom: 6%; width: 180px; }
+
+  /* Voyage chapter spacing on mobile */
+  .voyage__chapter {
+    min-height: 100vh; min-height: 100dvh;
+    padding: var(--s-7) var(--s-4);
+  }
+  .voyage__chapter-body p,
+  .voyage__chapter-coda { font-size: 1.05rem; line-height: 1.65; }
+  .voyage__quote {
+    padding: var(--s-5) var(--s-4);
+    margin: var(--s-6) 0 var(--s-4);
+  }
+  .voyage__quote p { font-size: 1.4rem; line-height: 1.45; }
+  .voyage__intro .voyage__chapter-title { font-size: 2.6rem; }
+
+  /* Samsun headline */
+  .samsun__title { font-size: 3rem; }
+
+  /* Hitabe lines tighter line-height for narrow screens */
+  .hitabe__line { font-size: 1.25rem; margin: var(--s-4) 0; }
+  .hitabe__line--accent { font-size: 1.45rem; }
+
+  /* Pledge form touch targets */
+  .pledge__form input, .pledge__form textarea { padding: var(--s-3) var(--s-4); font-size: 16px; }
+  .pledge__actions { flex-direction: column; gap: var(--s-3); width: 100%; }
+  .pledge__actions .btn { width: 100%; }
+  .btn { padding: var(--s-3) var(--s-5); }
+
+  /* Map cards: tighter gaps */
+  .map__cards { padding: var(--s-3) 0 var(--s-6); }
+}
+
+/* ──────────────────────────────────────────────
+   Narrow phones (≤380px) — iPhone SE, small Androids
+─────────────────────────────────────────────── */
+@media (max-width: 380px) {
+  .scene { padding: var(--s-7) var(--s-3); }
+  .scene--map { padding: var(--s-6) var(--s-3); }
+  .voyage__chapter { padding: var(--s-6) var(--s-3); }
+  .voyage__quote p { font-size: 1.25rem; }
+  .voyage__chapter-title { font-size: 2rem; }
+  .samsun__title { font-size: 2.5rem; }
+  .finale__motto { font-size: 2.2rem; }
+  .hitabe__line { font-size: 1.15rem; }
+  .hitabe__line--accent { font-size: 1.3rem; }
+  /* Map cards in even tighter padding */
+  .map__card { padding: var(--s-3); }
+  .map__card h3 { font-size: 1.1rem; }
+
+  /* Voyage chapter vignette less aggressive */
+  .voyage__chapter::before { inset: 5% 2%; }
+}
+
+/* ──────────────────────────────────────────────
+   Landscape on short phones — keep things compact
+─────────────────────────────────────────────── */
+@media (max-height: 480px) and (orientation: landscape) {
+  .scene { min-height: 110vh; min-height: 110dvh; }
+  .opening__date { font-size: clamp(2.5rem, 9vw, 6rem); }
+  .voyage__chapter { min-height: 130vh; min-height: 130dvh; }
+}
+
+/* ──────────────────────────────────────────────
+   Reduced motion
+─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .opening__date span,
+  .opening__eyebrow,
+  .opening__scroll,
+  .voyage__line,
+  .hitabe__line,
+  .map__card { opacity: 1 !important; transform: none !important; }
+  .samsun__sky, .samsun__sun { opacity: 1 !important; }
+  .map__route { opacity: 1 !important; stroke-dashoffset: 0 !important; }
+  .city circle { opacity: 1 !important; transform: scale(1) !important; }
+  .city text { opacity: 1 !important; }
+}

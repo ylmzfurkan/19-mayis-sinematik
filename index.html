@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0e27" />
+    <meta name="description" content="19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı — Bandırma'dan Samsun'a sinematik bir yolculuk." />
+    <meta property="og:title" content="19 Mayıs — Bir Asır Önce Bir Şafak" />
+    <meta property="og:description" content="Atatürk'ün Samsun'a çıkışından bugüne uzanan sinematik bir yolculuk. Sen de sözünü bırak." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/reset.css" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <title>19 Mayıs — Bir Asır Önce Bir Şafak</title>
+  </head>
+  <body>
+    <!-- Persistent UI -->
+    <div id="progress-bar" aria-hidden="true"><span></span></div>
+
+    <header class="controls">
+      <button id="audio-toggle" type="button" aria-pressed="false" aria-label="Sesi aç">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor" />
+          <path class="audio-on-only" d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" fill="currentColor" />
+        </svg>
+        <span class="visually-hidden">Sesi aç</span>
+      </button>
+    </header>
+
+    <main id="story">
+      <!-- Scene 1 — Opening -->
+      <section class="scene scene--opening" data-scene="opening">
+        <div class="stars" aria-hidden="true"></div>
+        <div class="opening__content">
+          <p class="opening__eyebrow">Bir asır önce, bir şafak…</p>
+          <h1 class="opening__date">
+            <span>19</span><span>Mayıs</span><span>1919</span>
+          </h1>
+          <p class="opening__scroll">Yolculuğa başlamak için kaydır <span aria-hidden="true">↓</span></p>
+        </div>
+      </section>
+
+      <!-- Scene 2 — Istanbul departure -->
+      <section class="scene scene--istanbul" data-scene="istanbul">
+        <div class="parallax">
+          <div class="parallax__sky" data-speed="0.2"></div>
+          <div class="parallax__hills" data-speed="0.4"></div>
+          <div class="parallax__sea" data-speed="0.6"></div>
+          <div class="parallax__ship" data-speed="1">
+            <svg viewBox="0 0 240 100" aria-hidden="true">
+              <path d="M20 70 L40 50 L60 50 L70 30 L130 30 L140 50 L220 50 L210 75 L30 75 Z" fill="#1a1f3a" stroke="#e8d4a0" stroke-width="1.5"/>
+              <rect x="80" y="35" width="10" height="15" fill="#e8d4a0"/>
+              <rect x="100" y="38" width="10" height="12" fill="#e8d4a0"/>
+              <path d="M155 50 L155 15 L175 15 L155 15 M165 15 L165 50" stroke="#e8d4a0" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+        </div>
+        <div class="scene__text scene__text--left">
+          <p class="eyebrow">16 Mayıs 1919 · İstanbul</p>
+          <h2>Bir vapur sessizce demir aldı.</h2>
+          <p>Mustafa Kemal Paşa, Bandırma Vapuru ile İstanbul'dan ayrıldı. Geride bir imparatorluk, önünde bilinmez bir yolculuk vardı.</p>
+        </div>
+      </section>
+
+      <!-- Scene 3 — Voyage (three nights at sea) -->
+      <section class="scene scene--voyage" data-scene="voyage">
+        <!-- Persistent atmosphere: stays in viewport while chapters scroll past -->
+        <div class="voyage__atmosphere" aria-hidden="true">
+          <!-- Tint overlay that morphs per chapter (night1 → storm → dawn) -->
+          <div class="voyage__tint"></div>
+
+          <!-- Stars in night sky -->
+          <div class="voyage__stars"></div>
+
+          <!-- Moon -->
+          <div class="voyage__moon">
+            <div class="voyage__moon-glow"></div>
+            <div class="voyage__moon-disc"></div>
+          </div>
+
+          <!-- Horizon glow on the sea -->
+          <div class="voyage__horizon"></div>
+
+          <!-- Far drifting mist (behind ship) -->
+          <div class="voyage__mist voyage__mist--far"></div>
+
+          <!-- Bandırma Vapuru sailing on the horizon -->
+          <div class="voyage__ship">
+          <svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg">
+            <!-- Hull -->
+            <path d="M18 78 L42 58 L62 58 L82 38 L160 38 L174 58 L300 58 L284 92 L42 92 Z"
+                  fill="#0a0e27" stroke="#c9a85d" stroke-width="1.2" stroke-opacity="0.7"/>
+            <!-- Portholes -->
+            <circle cx="80"  cy="70" r="2.2" fill="#f3b96b" opacity="0.85"/>
+            <circle cx="105" cy="70" r="2.2" fill="#f3b96b" opacity="0.6"/>
+            <circle cx="200" cy="70" r="2.2" fill="#f3b96b" opacity="0.8"/>
+            <circle cx="225" cy="70" r="2.2" fill="#f3b96b" opacity="0.55"/>
+            <circle cx="255" cy="70" r="2.2" fill="#f3b96b" opacity="0.7"/>
+            <circle cx="280" cy="70" r="2.2" fill="#f3b96b" opacity="0.5"/>
+            <!-- Chimney with red band -->
+            <rect x="120" y="8" width="14" height="30" fill="#0a0e27" stroke="#c9a85d" stroke-width="1.2"/>
+            <rect x="120" y="14" width="14" height="4" fill="#e30a17" opacity="0.75"/>
+            <!-- Bridge / cabin -->
+            <rect x="140" y="22" width="56" height="16" fill="#0d1430" stroke="#c9a85d" stroke-width="1" opacity="0.85"/>
+            <circle cx="153" cy="30" r="1.5" fill="#f3b96b" opacity="0.7"/>
+            <circle cx="170" cy="30" r="1.5" fill="#f3b96b" opacity="0.7"/>
+            <circle cx="187" cy="30" r="1.5" fill="#f3b96b" opacity="0.7"/>
+            <!-- Front mast with diagonal rigging stays (no horizontal crossbeam) -->
+            <line x1="78" y1="38" x2="78" y2="6"
+                  stroke="#c9a85d" stroke-width="1.4" opacity="0.85"/>
+            <line x1="78" y1="6" x2="50" y2="60"
+                  stroke="#c9a85d" stroke-width="0.7" opacity="0.4"/>
+            <line x1="78" y1="6" x2="106" y2="60"
+                  stroke="#c9a85d" stroke-width="0.7" opacity="0.4"/>
+            <!-- Rear mast with rigging -->
+            <line x1="245" y1="38" x2="245" y2="10"
+                  stroke="#c9a85d" stroke-width="1.4" opacity="0.85"/>
+            <line x1="245" y1="10" x2="220" y2="60"
+                  stroke="#c9a85d" stroke-width="0.7" opacity="0.4"/>
+            <line x1="245" y1="10" x2="270" y2="60"
+                  stroke="#c9a85d" stroke-width="0.7" opacity="0.4"/>
+            <!-- Lanterns at mast tops -->
+            <circle class="voyage__ship-lantern" cx="78" cy="6" r="2.2" fill="#f3b96b"/>
+            <circle cx="245" cy="10" r="1.8" fill="#f3b96b" opacity="0.85"/>
+          </svg>
+          </div>
+
+          <!-- Near drifting mist (in front of ship) -->
+          <div class="voyage__mist voyage__mist--near"></div>
+
+          <!-- Multi-layer waves -->
+          <div class="voyage__waves">
+            <svg viewBox="0 0 1440 280" preserveAspectRatio="none">
+              <path class="wave wave--0" d="M0 80 Q360 50 720 80 T1440 80 V280 H0 Z" />
+              <path class="wave wave--1" d="M0 130 Q360 90 720 130 T1440 130 V280 H0 Z" />
+              <path class="wave wave--2" d="M0 170 Q360 130 720 170 T1440 170 V280 H0 Z" />
+              <path class="wave wave--3" d="M0 210 Q360 170 720 210 T1440 210 V280 H0 Z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Narrative chapters scroll on top of the atmosphere -->
+        <div class="voyage__chapters">
+          <!-- Intro -->
+          <article class="voyage__chapter voyage__intro" data-chapter="intro">
+            <p class="voyage__eyebrow">1919 · Karanlık Günler</p>
+            <h2 class="voyage__chapter-title">İstanbul işgal altında.</h2>
+            <div class="voyage__chapter-body">
+              <p>Sokaklarda sessizlik, limanlarda yabancı askerler, insanların gözlerinde belirsizlik vardı.</p>
+              <p>Ama o sessizliğin içinde, bir adamın zihninde yeni bir ülkenin ateşi yanıyordu.</p>
+            </div>
+            <div class="voyage__departure">
+              <p class="voyage__date">16 Mayıs 1919 · Cuma</p>
+              <p class="voyage__departure-title">Bandırma Vapuru yolculuğu başladı.</p>
+            </div>
+          </article>
+
+          <!-- Night 1 -->
+          <article class="voyage__chapter" data-chapter="1">
+            <header class="voyage__chapter-head">
+              <span class="voyage__chapter-num">1. Gece</span>
+              <h3 class="voyage__chapter-title">İstanbul'dan Ayrılış</h3>
+            </header>
+            <div class="voyage__chapter-body">
+              <p>Galata Rıhtımı yavaş yavaş geride kalırken, Bandırma Vapuru karanlık sulara doğru ilerliyordu. İstanbul'un silueti sislerin arasına karışıyordu.</p>
+              <p>Mustafa Kemal, güvertede uzun süre şehre baktı. Arkasında işgal altındaki bir başkent — önünde, kaderi henüz yazılmamış bir millet vardı.</p>
+              <p>Gemide sessizlik hakimdi. Kimse yüksek sesle konuşmuyordu. Çünkü bu yolculuk yalnızca bir görev değildi; bir milletin yeniden ayağa kalkma ihtimaliydi.</p>
+              <p class="voyage__accent">O gece Karadeniz sertti. Rüzgâr geminin gövdesine vururken, Bandırma Vapuru karanlığın içinde yol almaya devam etti.</p>
+            </div>
+          </article>
+
+          <!-- Night 2 -->
+          <article class="voyage__chapter" data-chapter="2">
+            <header class="voyage__chapter-head">
+              <span class="voyage__chapter-num">2. Gece</span>
+              <h3 class="voyage__chapter-title">Karadeniz'in Ortasında</h3>
+            </header>
+            <div class="voyage__chapter-body">
+              <p>17 Mayıs gecesi. Deniz daha da hırçındı. Dalgalara rağmen gemi ilerliyordu.</p>
+              <p>Mustafa Kemal kamarasında haritaları inceliyor, Anadolu'dan gelen haberleri düşünüyordu. İşgaller büyüyordu. Halk yorgundu. Ama umut tamamen kaybolmuş değildi.</p>
+              <p>Bandırma Vapuru küçüktü — fakat taşıdığı fikir çok büyüktü:</p>
+            </div>
+            <blockquote class="voyage__quote">
+              <p>"Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır."</p>
+              <cite>— Mustafa Kemal</cite>
+            </blockquote>
+            <p class="voyage__chapter-coda">
+              Karadeniz'in karanlığında, yeni bir mücadelenin ilk adımları sessizce şekilleniyordu.
+            </p>
+          </article>
+
+          <!-- Night 3 -->
+          <article class="voyage__chapter" data-chapter="3">
+            <header class="voyage__chapter-head">
+              <span class="voyage__chapter-num">3. Gece</span>
+              <h3 class="voyage__chapter-title">Samsun'a Yaklaşırken</h3>
+            </header>
+            <div class="voyage__chapter-body">
+              <p>18 Mayıs gecesi. Ufukta Anadolu vardı.</p>
+              <p>Gemide yorgunluk vardı ama geri dönüş düşüncesi yoktu. Çünkü artık bu yolculuk bir varıştan çok daha fazlasıydı — bağımsızlık ateşinin Anadolu'ya taşınışıydı.</p>
+              <p>Sabaha karşı deniz sakinleşmeye başladı. Gökyüzü ağır ağır aydınlanırken, Bandırma Vapuru Samsun kıyılarına yaklaştı.</p>
+            </div>
+            <p class="voyage__outro">Ve 19 Mayıs 1919 sabahı…</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Scene 4 — Samsun arrival -->
+      <section class="scene scene--samsun" data-scene="samsun">
+        <div class="samsun__sky" aria-hidden="true"></div>
+        <div class="samsun__sun" aria-hidden="true"></div>
+        <div class="samsun__sea" aria-hidden="true"></div>
+        <div class="samsun__pier" aria-hidden="true"></div>
+        <div class="samsun__content">
+          <p class="eyebrow">19 Mayıs 1919 · Samsun</p>
+          <h2 class="samsun__title">Şafak söktü.</h2>
+          <p class="samsun__lead">
+            Mustafa Kemal Samsun'a ayak bastığında, bu sadece bir karaya çıkış değildi —
+            bir milletin yeniden doğuşuydu.
+          </p>
+        </div>
+      </section>
+
+      <!-- Scene 5 — Anatolia awakening -->
+      <section class="scene scene--map" data-scene="map">
+        <div class="map__layout">
+        <div class="map__visual">
+        <div class="map__intro">
+          <p class="eyebrow">Anadolu'nun Uyanışı</p>
+          <h2>Bir kıvılcım, beş şehir, bir millet.</h2>
+        </div>
+        <div class="map__wrap">
+          <svg class="map__svg" viewBox="0 0 800 360" aria-label="Türkiye haritası">
+            <!-- Stylised Turkey silhouette -->
+            <path class="map__land" d="M40 180 L80 140 L160 130 L220 150 L300 130 L380 140 L450 120 L520 130 L600 150 L680 140 L740 170 L760 200 L720 230 L640 240 L560 230 L480 240 L400 230 L320 240 L240 230 L160 240 L100 220 L60 210 Z"/>
+            <!-- Cities -->
+            <g class="city" data-city="samsun" style="--x: 420px; --y: 130px;">
+              <circle cx="420" cy="130" r="6"/>
+              <text x="420" y="115">Samsun</text>
+              <text class="city__date" x="420" y="155">19 May 1919</text>
+            </g>
+            <g class="city" data-city="amasya" style="--x: 410px; --y: 160px;">
+              <circle cx="410" cy="160" r="6"/>
+              <text x="410" y="180">Amasya</text>
+              <text class="city__date" x="410" y="198">22 Haz 1919</text>
+            </g>
+            <g class="city" data-city="erzurum" style="--x: 600px; --y: 170px;">
+              <circle cx="600" cy="170" r="6"/>
+              <text x="600" y="155">Erzurum</text>
+              <text class="city__date" x="600" y="195">23 Tem 1919</text>
+            </g>
+            <g class="city" data-city="sivas" style="--x: 470px; --y: 180px;">
+              <circle cx="470" cy="180" r="6"/>
+              <text x="470" y="205">Sivas</text>
+              <text class="city__date" x="470" y="223">4 Eyl 1919</text>
+            </g>
+            <g class="city" data-city="ankara" style="--x: 330px; --y: 175px;">
+              <circle cx="330" cy="175" r="6"/>
+              <text x="330" y="195">Ankara</text>
+              <text class="city__date" x="330" y="213">27 Ara 1919</text>
+            </g>
+            <!-- Route path -->
+            <path class="map__route" d="M420 130 L410 160 L600 170 L470 180 L330 175"
+                  fill="none" stroke="#e8d4a0" stroke-width="2" stroke-dasharray="6 4"/>
+          </svg>
+        </div>
+        </div>
+        <div class="map__cards">
+          <article class="map__card" data-card="samsun">
+            <h3>Samsun · 19 Mayıs 1919</h3>
+            <p>Mustafa Kemal Paşa, 9. Ordu Müfettişi sıfatıyla Samsun'a çıktı. Milli Mücadele'nin ilk adımı atıldı.</p>
+          </article>
+          <article class="map__card" data-card="amasya">
+            <h3>Amasya · 22 Haziran 1919</h3>
+            <p>Amasya Genelgesi: "Milletin istiklâlini yine milletin azim ve kararı kurtaracaktır."</p>
+          </article>
+          <article class="map__card" data-card="erzurum">
+            <h3>Erzurum Kongresi · 23 Temmuz 1919</h3>
+            <p>Doğu illeri temsilcileri toplandı; milli sınırlar ve milli irade fikri ilk kez resmiyet kazandı.</p>
+          </article>
+          <article class="map__card" data-card="sivas">
+            <h3>Sivas Kongresi · 4 Eylül 1919</h3>
+            <p>Tüm cemiyetler "Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti" çatısı altında birleşti.</p>
+          </article>
+          <article class="map__card" data-card="ankara">
+            <h3>Ankara · 27 Aralık 1919</h3>
+            <p>Mustafa Kemal ve heyet Ankara'ya ulaştı. Milli Mücadele'nin merkezi artık burasıydı.</p>
+          </article>
+        </div>
+        </div>
+      </section>
+
+      <!-- Scene 6 — Gençliğe Hitabe -->
+      <section class="scene scene--hitabe" data-scene="hitabe" id="hitabe">
+        <div class="hitabe__bg" aria-hidden="true"></div>
+        <div class="hitabe__content">
+          <p class="eyebrow eyebrow--gold">Gençliğe Hitabe</p>
+          <blockquote class="hitabe__text">
+            <p class="hitabe__line">Ey Türk Gençliği!</p>
+            <p class="hitabe__line">Birinci vazifen,</p>
+            <p class="hitabe__line">Türk istiklâlini, Türk Cumhuriyetini, <em>ilelebet</em> muhafaza ve müdafaa etmektir.</p>
+            <p class="hitabe__line">Mevcudiyetinin ve istikbalinin yegâne temeli budur.</p>
+            <p class="hitabe__line hitabe__line--accent">Muhtaç olduğun kudret, damarlarındaki asil kanda <em>mevcuttur</em>.</p>
+          </blockquote>
+          <p class="hitabe__signature">— Mustafa Kemal Atatürk, 20 Ekim 1927</p>
+        </div>
+      </section>
+
+      <!-- Scene 7 — Gallery (sticky cross-fade of 7 images) -->
+      <section class="scene scene--gallery" data-scene="gallery">
+        <div class="gallery__viewport">
+          <div class="gallery__slide"><img src="/images/image1.png" alt="" loading="lazy" decoding="async" /></div>
+          <div class="gallery__slide"><img src="/images/image2.png" alt="" loading="lazy" decoding="async" /></div>
+          <div class="gallery__slide"><img src="/images/image3.png" alt="" loading="lazy" decoding="async" /></div>
+          <div class="gallery__slide"><img src="/images/image4.png" alt="" loading="lazy" decoding="async" /></div>
+          <div class="gallery__slide"><img src="/images/image5.png" alt="" loading="lazy" decoding="async" /></div>
+          <div class="gallery__slide"><img src="/images/image6.png" alt="" loading="lazy" decoding="async" /></div>
+          <div class="gallery__slide"><img src="/images/image7.png" alt="" loading="lazy" decoding="async" /></div>
+
+          <!-- Gradient overlay for caption legibility -->
+          <div class="gallery__vignette" aria-hidden="true"></div>
+
+          <!-- Optional poetic captions per image (fade with their slide) -->
+          <div class="gallery__captions">
+            <p class="gallery__caption">Bir milletin sessiz hatırası…</p>
+            <p class="gallery__caption">Karanlığın içinde yanan bir umut.</p>
+            <p class="gallery__caption">Yüreklerde tutuşan ateş.</p>
+            <p class="gallery__caption">Bir yolculuk, bir kararlılık.</p>
+            <p class="gallery__caption">Şafak söker, gökyüzü aydınlanır.</p>
+            <p class="gallery__caption">Anadolu uyanır.</p>
+            <p class="gallery__caption">Ve bugün, mirası bizdedir.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 8 — Finale -->
+      <section class="scene scene--finale" data-scene="finale">
+        <img class="finale__flag" src="/images/turk-bayragi.svg" alt="Türk Bayrağı" width="1200" height="800" />
+        <h2 class="finale__motto">Ne Mutlu Türküm Diyene</h2>
+        <p class="finale__small">19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun.</p>
+      </section>
+    </main>
+
+    <!-- Hidden ambient audio (autoplays via JS once user interacts) -->
+    <audio id="ambient" loop preload="auto" src="/audio/ambient.mp3"></audio>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

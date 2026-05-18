@@ -1,0 +1,44 @@
+:root {
+  /* Color */
+  --c-night: #0a0e27;
+  --c-night-2: #131838;
+  --c-deep: #050714;
+  --c-sea: #0e2a4a;
+  --c-sea-2: #163a63;
+  --c-dawn: #f3b96b;
+  --c-dawn-2: #e8723a;
+  --c-gold: #e8d4a0;
+  --c-gold-2: #c9a85d;
+  --c-paper: #f5ecd4;
+  --c-cream: #faf4e4;
+  --c-red: #e30a17;            /* Türk bayrağı kırmızısı */
+  --c-red-dark: #b30812;
+  --c-text: #f5ecd4;
+  --c-text-dim: rgba(245, 236, 212, 0.72);
+  --c-text-mute: rgba(245, 236, 212, 0.5);
+  --c-ink: #1a1f3a;
+
+  /* Type */
+  --f-display: 'Bebas Neue', 'Inter', system-ui, sans-serif;
+  --f-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --f-quote: 'Playfair Display', Georgia, serif;
+
+  /* Spacing */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+  --s-10: 8rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Layout */
+  --maxw: 1180px;
+}
